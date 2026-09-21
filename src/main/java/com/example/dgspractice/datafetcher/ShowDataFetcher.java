@@ -8,6 +8,7 @@ import com.example.dgspractice.dto.ShowDto;
 import com.example.dgspractice.entity.Movie;
 import com.example.dgspractice.entity.Review;
 import com.example.dgspractice.entity.Show;
+import com.example.dgspractice.event.ShowEventPublisher;
 import com.example.dgspractice.exception.ShowNotFoundException;
 import com.example.dgspractice.mapper.MovieMapper;
 import com.example.dgspractice.mapper.ReviewMapper;
@@ -18,7 +19,9 @@ import com.example.dgspractice.service.ShowService;
 import com.example.dgspractice.generated.DgsConstants;
 import com.netflix.graphql.dgs.*;
 import org.dataloader.DataLoader;
+import org.reactivestreams.Publisher;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -38,13 +41,16 @@ public class ShowDataFetcher {
 
     private final MovieMapper movieMapper;
 
-    public ShowDataFetcher(ShowService showService,  ShowMapper showMapper, ReviewMapper reviewMapper,  ReviewService reviewService, MovieService movieService, MovieMapper movieMapper) {
+    private final ShowEventPublisher showEventPublisher;
+
+    public ShowDataFetcher(ShowService showService,  ShowMapper showMapper, ReviewMapper reviewMapper,  ReviewService reviewService, MovieService movieService, MovieMapper movieMapper, ShowEventPublisher showEventPublisher) {
         this.showService = showService;
         this.showMapper = showMapper;
         this.reviewMapper = reviewMapper;
         this.reviewService = reviewService;
         this.movieService = movieService;
         this.movieMapper = movieMapper;
+        this.showEventPublisher = showEventPublisher;
     }
 
     @DgsQuery
@@ -60,8 +66,8 @@ public class ShowDataFetcher {
     }
 
     @DgsMutation
-    public Show addShow(@InputArgument AddShowInput input) {
-        return showService.add(input);
+    public ShowDto addShow(@InputArgument AddShowInput input) {
+        return showMapper.toShowDto(showService.add(input));
     }
 
     @DgsData(parentType = DgsConstants.SHOW.TYPE_NAME, field = DgsConstants.SHOW.Reviews)
@@ -77,6 +83,16 @@ public class ShowDataFetcher {
         if (result instanceof MovieDto) return "Movie";
         if (result instanceof ReviewDto) return "Review";
         throw new IllegalStateException("Unknown SearchResult type: " + result.getClass());
+    }
+
+    @DgsSubscription
+    public Publisher<ShowDto> showAdded() {
+        return showEventPublisher.showAdded().map(showMapper::toShowDto);
+    }
+
+    @DgsQuery
+    public List<ReviewDto> reviewsSince(@InputArgument LocalDateTime since) {
+        return reviewMapper.toReviewDtoList(reviewService.reviewsSince(since));
     }
 
     @DgsQuery

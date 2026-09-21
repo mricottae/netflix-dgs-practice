@@ -1,3 +1,5 @@
 package com.example.dgspractice.dto;
 
-public record ReviewDto(Integer showId, String username, Integer starScore) {}
+import java.time.LocalDateTime;
+
+public record ReviewDto(Integer showId, String username, Integer starScore, LocalDateTime submittedDate) {}

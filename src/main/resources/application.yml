@@ -2,6 +2,8 @@ spring:
   application:
     name: netflix-dgs-practice
   graphql:
+    websocket:
+      path: /graphql     # WebSocket endpoint for subscriptions
     graphiql:
       enabled: true      # in-browser IDE at /graphiql
     schema:

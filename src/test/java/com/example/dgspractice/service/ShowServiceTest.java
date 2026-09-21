@@ -24,7 +24,7 @@ class ShowServiceTest {
     @Test
     void filtersByTitleCaseInsensitively() {
         when(showRepository.findByTitleContainingIgnoreCase("STRANGER"))
-                .thenReturn(List.of(new Show(1, "Stranger Things", 2016)));
+                .thenReturn(List.of(new Show(1, "Stranger Things", 2016, 4)));
 
         assertThat(showService.findByTitleAndYear("STRANGER", null))
                 .extracting(Show::getTitle)

@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +28,10 @@ public class ReviewService {
             return reviewRepository.findByUsernameContainingIgnoreCase(search);
         }
         return reviewRepository.findAll();
+    }
+
+    public List<Review> reviewsSince(LocalDateTime since) {
+        return reviewRepository.findBySubmittedDateAfter(since);
     }
 
     public List<Review> reviewsForShow(int showId) {

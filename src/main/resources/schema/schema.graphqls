@@ -1,12 +1,19 @@
+scalar DateTime
+
 type Query {
     shows(titleFilter: String, yearFilter: Int): [Show!]!
     showById(id: ID!): Show
     media(titleFilter: String): [Media!]!
     search(term: String!): [SearchResult!]!
+    reviewsSince(since: DateTime!): [Review!]!
 }
 
 type Mutation {
     addShow(input: AddShowInput!): Show!
+}
+
+type Subscription {
+    showAdded: Show!
 }
 
 interface Media {
@@ -33,6 +40,7 @@ type Movie implements Media {
 type Review {
     username: String!
     starScore: Int!
+    submittedDate: DateTime
 }
 
 union SearchResult = Show | Movie | Review

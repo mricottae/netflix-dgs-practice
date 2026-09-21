@@ -10,7 +10,7 @@ import java.util.List;
 public class ReviewMapper {
 
     public ReviewDto toReviewDto(Review review) {
-        return new ReviewDto(null, review.getUsername(), review.getStarScore());
+        return new ReviewDto(null, review.getUsername(), review.getStarScore(), review.getSubmittedDate());
     }
 
     public List<ReviewDto> toReviewDtoList(List<Review> reviews) {
@@ -18,6 +18,6 @@ public class ReviewMapper {
     }
 
     public Review toReviewEntity(ReviewDto review) {
-        return new Review(null, review.showId(), review.username(), review.starScore());
+        return new Review(null, review.showId(), review.username(), review.starScore(), review.submittedDate());
     }
 }

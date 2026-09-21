@@ -1,6 +1,8 @@
 package com.example.dgspractice.entity;
 
 import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,4 +21,5 @@ public class Review {
     private Integer showId;
     private String username;
     private Integer starScore;
+    private LocalDateTime submittedDate;
 }
