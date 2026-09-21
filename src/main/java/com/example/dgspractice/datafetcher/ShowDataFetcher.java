@@ -1,6 +1,8 @@
 package com.example.dgspractice.datafetcher;
 
 import com.example.dgspractice.dataloader.ReviewsDataLoader;
+import com.example.dgspractice.context.UserContext;
+import com.example.dgspractice.dto.AddReviewInput;
 import com.example.dgspractice.dto.AddShowInput;
 import com.example.dgspractice.dto.MovieDto;
 import com.example.dgspractice.dto.ReviewDto;
@@ -9,6 +11,7 @@ import com.example.dgspractice.entity.Movie;
 import com.example.dgspractice.entity.Review;
 import com.example.dgspractice.entity.Show;
 import com.example.dgspractice.event.ShowEventPublisher;
+import com.example.dgspractice.exception.MissingUserException;
 import com.example.dgspractice.exception.ShowNotFoundException;
 import com.example.dgspractice.mapper.MovieMapper;
 import com.example.dgspractice.mapper.ReviewMapper;
@@ -18,6 +21,7 @@ import com.example.dgspractice.service.ReviewService;
 import com.example.dgspractice.service.ShowService;
 import com.example.dgspractice.generated.DgsConstants;
 import com.netflix.graphql.dgs.*;
+import com.netflix.graphql.dgs.context.DgsContext;
 import org.dataloader.DataLoader;
 import org.reactivestreams.Publisher;
 
@@ -83,6 +87,15 @@ public class ShowDataFetcher {
         if (result instanceof MovieDto) return "Movie";
         if (result instanceof ReviewDto) return "Review";
         throw new IllegalStateException("Unknown SearchResult type: " + result.getClass());
+    }
+
+    @DgsMutation
+    public ReviewDto addReview(@InputArgument AddReviewInput input, DgsDataFetchingEnvironment dfe) {
+        UserContext user = DgsContext.getCustomContext(dfe);
+        if (!user.isAuthenticated()) {
+            throw new MissingUserException();
+        }
+        return reviewMapper.toReviewDto(reviewService.add(input, user.username()));
     }
 
     @DgsSubscription

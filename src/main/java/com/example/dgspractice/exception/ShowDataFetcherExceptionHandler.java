@@ -29,6 +29,15 @@ public class ShowDataFetcherExceptionHandler implements DataFetcherExceptionHand
                     DataFetcherExceptionHandlerResult.newResult(error).build());
         }
 
+        if (params.getException() instanceof MissingUserException ex) {
+            var error = TypedGraphQLError.newPermissionDeniedBuilder()
+                    .message(ex.getMessage())
+                    .path(params.getPath())
+                    .build();
+            return CompletableFuture.completedFuture(
+                    DataFetcherExceptionHandlerResult.newResult(error).build());
+        }
+
         if (params.getException() instanceof ConstraintViolationException ex) {
             var error = TypedGraphQLError.newBadRequestBuilder()
                     .message(describe(ex))

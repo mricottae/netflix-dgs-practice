@@ -31,3 +31,12 @@ spring:
 logging:
   level:
     com.example.dgspractice: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics   # deliberately narrow: env/beans would leak config
+  metrics:
+    tags:
+      application: netflix-dgs-practice

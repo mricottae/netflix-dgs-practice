@@ -10,6 +10,7 @@ type Query {
 
 type Mutation {
     addShow(input: AddShowInput!): Show!
+    addReview(input: AddReviewInput!): Review!
 }
 
 type Subscription {
@@ -44,6 +45,11 @@ type Review {
 }
 
 union SearchResult = Show | Movie | Review
+
+input AddReviewInput {
+    showId: ID!
+    starScore: Int!
+}
 
 input AddShowInput {
     title: String!
