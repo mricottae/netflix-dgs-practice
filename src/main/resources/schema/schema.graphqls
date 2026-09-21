@@ -1,0 +1,44 @@
+type Query {
+    shows(titleFilter: String, yearFilter: Int): [Show!]!
+    showById(id: ID!): Show
+    media(titleFilter: String): [Media!]!
+    search(term: String!): [SearchResult!]!
+}
+
+type Mutation {
+    addShow(input: AddShowInput!): Show!
+}
+
+interface Media {
+    id: ID!
+    title: String!
+    releaseYear: Int
+}
+
+type Show implements Media {
+    id: ID!
+    title: String!
+    releaseYear: Int
+    seasons: Int
+    reviews: [Review!]
+}
+
+type Movie implements Media {
+    id: ID!
+    title: String!
+    releaseYear: Int
+    runtimeMinutes: Int
+}
+
+type Review {
+    username: String!
+    starScore: Int!
+}
+
+union SearchResult = Show | Movie | Review
+
+input AddShowInput {
+    title: String!
+    releaseYear: Int
+    seasons: Int
+}
